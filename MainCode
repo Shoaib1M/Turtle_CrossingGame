@@ -1,0 +1,97 @@
+import random
+from turtle import Turtle,Screen
+import time
+
+#screen
+screen=Screen()
+screen.bgcolor("white")
+screen.setup(width=600,height=600)
+screen.tracer(0)
+
+#turtle
+turt=Turtle()
+turt.shape("turtle")
+turt.penup()
+turt.color("black")
+turt.goto(0,-270)
+turt.left(90)
+move_distance=20
+
+def move_right():
+    if turt.xcor()<270:
+        turt.goto(turt.xcor() + move_distance, turt.ycor())
+        screen.update()
+
+def move_left():
+    if turt.xcor()>-270:
+        turt.goto(turt.xcor() - move_distance, turt.ycor())
+        screen.update()
+
+def move_up():
+    turt.goto(turt.xcor(), turt.ycor() + move_distance)
+    screen.update()
+
+def move_down():
+    if turt.xcor()>-300:
+        turt.goto(turt.xcor(), turt.ycor() - move_distance)
+        screen.update()
+
+
+screen.listen()
+screen.onkey(move_up, "Up")
+screen.onkey(move_down, "Down")
+screen.onkey(move_right, "Right")
+screen.onkey(move_left, "Left")
+
+all_cars=[]
+def generate():
+    choice=random.randint(1,5)
+    if choice==1:
+        colors=["red","blue","violet","purple","green","yellow","orange"]
+        car=Turtle()
+        car.shape("square")
+        car.shapesize(stretch_len=2,stretch_wid=1)
+        car.penup()
+        car.color(random.choice(colors))
+        random_y=random.randint(-230,230);
+        car.goto(300, random_y)
+        all_cars.append(car)
+
+back_dist=5
+def move():
+    for car in all_cars:
+        car.backward(back_dist)
+
+score=Turtle()
+score.color("black")
+score.penup()
+score.goto(-100,250)
+score.hideturtle()
+
+level=0
+def level_update():
+    score.clear()
+    score.write(f"Level= {level}",font=("Arial",25,"bold"))
+
+level_update()
+
+game_status=True
+
+default_time=0.1
+while game_status:
+    time.sleep(default_time)
+    screen.update()
+    generate()
+    move()
+    if turt.ycor() > 270:
+        turt.goto(0, -270)
+        back_dist += 5
+        level += 1
+        level_update()
+    for car in all_cars:
+        if car.distance(turt) < 20:
+            game_status = False
+            score.goto(0, 0)
+            score.write(f"Game Over\nFinal Level: {level}", align="center", font=("Arial", 30, "bold"))
+
+screen.exitonclick()
